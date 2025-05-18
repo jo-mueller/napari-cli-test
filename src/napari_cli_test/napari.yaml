@@ -6,3 +6,17 @@ visibility: public
 categories: ["Annotation", "Segmentation", "Acquisition"]
 contributions:
   commands:
+    - id: napari-cli-test.threshold_otsu
+      python_name: napari_cli_test:threshold_otsu
+      title: Threshold Otsu
+    - id: napari-cli-test.threshold_mean
+      python_name: napari_cli_test:threshold_mean
+      title: Threshold Mean
+
+  widgets:
+    - command: napari-cli-test.threshold_otsu
+      autogenerate: true
+      display_name: Threshold Otsu
+    - command: napari-cli-test.threshold_mean
+      autogenerate: true
+      display_name: Threshold Mean

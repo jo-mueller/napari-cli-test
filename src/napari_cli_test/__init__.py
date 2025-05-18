@@ -4,5 +4,11 @@ try:
 except ImportError:
     __version__ = "unknown"
 
+from .function import threshold_otsu, threshold_mean
+from .main import make_cli_executable
+
 __all__ = (
+    "threshold_otsu",
+    "threshold_mean",
+    "make_cli_executable".
     )
