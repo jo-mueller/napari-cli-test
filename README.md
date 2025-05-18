@@ -35,6 +35,37 @@ To install latest development version :
 
     pip install git+https://github.com/jo-mueller/napari-cli-test.git
 
+## Usage
+
+The `naparic-cli-test` plugin provides two demo functions and one decorator:
+
+- `threshold_otsu` and `threshold_mean`
+- `make_cli_executable`, which makes napari functions CLI executable.
+
+To actually make them CLI executable, add this statement to a function definition in a python file where the demo functions are available:
+
+```python
+import typer
+
+app = typer.Typer()
+
+app.command()(make_cli_executable(threshold_otsu))
+app.command()(make_cli_executable(threshold_mean))
+```
+
+These functions can then be used from the CLI like this:
+
+```bash
+python main.py threshold-otsu <path_to_an_image>
+```
+
+and the output will be saved under `<function_name>_output.tif`. Currently, the `make_cli_executable` decorator supports functions of the following type annotation scheme:
+
+```python
+def some_function(input_image: Image, kwargs) -> Union[Image, Labels]
+    ...
+```
+
 
 ## Contributing
 
