@@ -10,5 +10,5 @@ from .main import make_cli_executable
 __all__ = (
     "threshold_otsu",
     "threshold_mean",
-    "make_cli_executable".
+    "make_cli_executable",
     )
