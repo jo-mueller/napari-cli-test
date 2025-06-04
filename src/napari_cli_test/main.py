@@ -28,7 +28,7 @@ def make_cli_executable(function: Callable) -> Callable:
             overwritten_param = inspect.Parameter(
                 param.name,
                 param.kind,
-                annotation=Annotated[Path, typer.Argument(parser=parse_napari_image)]
+                annotation=Annotated[layers.Image, typer.Argument(parser=parse_napari_image)]
             )
             parameters.append(overwritten_param)
         else:
