@@ -146,6 +146,9 @@ for idx, cmd in enumerate(manifest.contributions.commands):
     if 'napari.viewer.Viewer' in [p.annotation for p in inspect.signature(function).parameters.values()]:
         continue
 
+    if 'Layer' in [p.annotation for p in inspect.signature(function).parameters.values()]:
+        continue
+
     try:
         new_name = function.__name__.replace('_widget', '').replace('_', '-')
         app.command(name=new_name)(make_cli_executable(function))
