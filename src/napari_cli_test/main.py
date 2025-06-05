@@ -11,7 +11,7 @@ import numpy as np
 from napari import layers, types
 import npe2
 from magicgui.type_map._magicgui import MagicFactory
-from napari_cli_test.function import threshold_otsu, threshold_mean
+from napari_cli_test.function import threshold_otsu, threshold_mean, threshold_manual
 
 app = typer.Typer()
 
