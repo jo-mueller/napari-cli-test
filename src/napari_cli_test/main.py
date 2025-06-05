@@ -54,7 +54,7 @@ def make_cli_executable(function: Callable) -> Callable:
     parameters = []
     for param in sig.parameters.values():
         if get_origin(param.annotation) is Union:
-            annotation = get_args(param.annotation)
+            annotation = [arg for arg in get_args(param.annotation) if arg is not type(None)][0]
         else:
             annotation = param.annotation
 
