@@ -31,6 +31,12 @@ def parse_napari_labels(value: Path) -> layers.Labels:
     labels = io.imread(value).astype(np.uint8)
     return layers.Labels(labels, name=Path(value).stem)
 
+def is_optional(annotation):
+    return (
+        get_origin(annotation) is Union
+        and type(None) in get_args(annotation)
+    )
+
 _WRITER_DISPATCH = {
     layers.Image: io.imsave,
     layers.Labels: io.imsave,
