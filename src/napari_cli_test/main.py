@@ -75,10 +75,13 @@ def make_cli_executable(function: Callable) -> Callable:
         else:
             output_folder = Path('.')
 
-        # Apply and then Save the result to a file
+        # Apply and convert to layer if necessary
         result_layer = function(*args, **kwargs)
-        output_file = output_folder / f"{function.__name__}_output.tif"
+        if isinstance(result_layer, types.LayerDataTuple):
+            result_layer = layers.Layer.create(*result_layer)
 
+        # Save to file
+        output_file = output_folder / f"{function.__name__}_output.tif"
         _WRITER_DISPATCH[type(result_layer)](
             output_file,
             result_layer.data,
