@@ -122,8 +122,41 @@ def make_cli_executable(function: Callable) -> Callable:
     return wrapper
 
 
+# Discover and register commands from the napari-skimage plugin
+plugin_manager = npe2.PluginManager()
+plugin_manager.discover()
+manifest = plugin_manager.get_manifest('napari-skimage')
+
+for idx, cmd in enumerate(manifest.contributions.commands):
+    module_path, function_name = cmd.python_name.split(':')
+
+    # Import the module
+    module = importlib.import_module(module_path)
+
+    # Get the function
+    function = getattr(module, function_name)
+
+    if inspect.isclass(function):
+        continue
+
+    if isinstance(function, MagicFactory):
+        widget = function()
+        function = widget._function
+
+    if 'napari.viewer.Viewer' in [p.annotation for p in inspect.signature(function).parameters.values()]:
+        continue
+
+    try:
+        app.command()(make_cli_executable(function))
+    except Exception as e:
+        continue
+
+
+
+
 app.command()(make_cli_executable(threshold_otsu))
 app.command()(make_cli_executable(threshold_mean))
+app.command()(make_cli_executable(threshold_manual))
 
 if __name__ == "__main__":
     app()
