@@ -1,4 +1,5 @@
-from typing import Callable
+from typing import Callable, Union, get_args, get_origin
+import importlib
 from typing_extensions import Annotated
 import functools
 import inspect
@@ -7,7 +8,9 @@ import os
 import typer
 from skimage import io
 import numpy as np
-from napari import layers
+from napari import layers, types
+import npe2
+from magicgui.type_map._magicgui import MagicFactory
 from napari_cli_test.function import threshold_otsu, threshold_mean
 
 app = typer.Typer()
@@ -44,7 +47,12 @@ def make_cli_executable(function: Callable) -> Callable:
 
     parameters = []
     for param in sig.parameters.values():
-        if param.annotation in supported_inputs:
+        if get_origin(param.annotation) is Union:
+            annotation = get_args(param.annotation)
+        else:
+            annotation = param.annotation
+
+        if annotation in supported_inputs:
             parser = _READER_DISPATCH[param.annotation]
             overwritten_param = inspect.Parameter(
                 param.name,
