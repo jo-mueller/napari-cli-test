@@ -6,6 +6,7 @@ from pathlib import Path
 import os
 import typer
 from skimage import io
+import numpy as np
 from napari import layers
 from napari_cli_test.function import threshold_otsu, threshold_mean
 
@@ -14,9 +15,28 @@ app = typer.Typer()
 
 _OUTPUT_FOLDER_PARAM_NAME = 'output_folder'
 
+supported_inputs = [
+    layers.Image,
+    layers.Labels,
+]
+
 def parse_napari_image(value: Path) -> layers.Image:
     image = io.imread(value)
     return layers.Image(image, name=Path(value).stem)
+
+def parse_napari_labels(value: Path) -> layers.Labels:
+    labels = io.imread(value).astype(np.uint8)
+    return layers.Labels(labels, name=Path(value).stem)
+
+_WRITER_DISPATCH = {
+    layers.Image: io.imsave,
+    layers.Labels: io.imsave,
+}
+
+_READER_DISPATCH = {
+    layers.Image: parse_napari_image,
+    layers.Labels: parse_napari_labels,
+}
 
 
 def make_cli_executable(function: Callable) -> Callable:
@@ -24,11 +44,12 @@ def make_cli_executable(function: Callable) -> Callable:
 
     parameters = []
     for param in sig.parameters.values():
-        if param.annotation == layers.Image:
+        if param.annotation in supported_inputs:
+            parser = _READER_DISPATCH[param.annotation]
             overwritten_param = inspect.Parameter(
                 param.name,
                 param.kind,
-                annotation=Annotated[layers.Image, typer.Argument(parser=parse_napari_image)]
+                annotation=Annotated[layers.Image, typer.Argument(parser=parser)]
             )
             parameters.append(overwritten_param)
         else:
@@ -57,7 +78,13 @@ def make_cli_executable(function: Callable) -> Callable:
         # Apply and then Save the result to a file
         result_layer = function(*args, **kwargs)
         output_file = output_folder / f"{function.__name__}_output.tif"
-        io.imsave(output_file, result_layer.data)
+
+        _WRITER_DISPATCH[type(result_layer)](
+            output_file,
+            result_layer.data,
+        )
+        
+        #result_layer.save(output_file, plugin=_WRITER_DISPATCH[type(result_layer)])
 
         return output_file
 
