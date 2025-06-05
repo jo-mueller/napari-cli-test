@@ -28,6 +28,7 @@ dependencies = [
     "numpy",
     "napari",
     "typer",
+    "napari-skimage",
 ]
 
 [project.optional-dependencies]
