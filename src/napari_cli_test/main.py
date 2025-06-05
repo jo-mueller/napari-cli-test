@@ -147,7 +147,8 @@ for idx, cmd in enumerate(manifest.contributions.commands):
         continue
 
     try:
-        app.command()(make_cli_executable(function))
+        new_name = function.__name__.replace('_widget', '').replace('_', '-')
+        app.command(name=new_name)(make_cli_executable(function))
     except Exception as e:
         continue
 
