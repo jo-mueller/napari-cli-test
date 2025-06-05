@@ -59,13 +59,13 @@ def make_cli_executable(function: Callable) -> Callable:
             annotation = param.annotation
 
         if annotation in supported_inputs:
-            parser = _READER_DISPATCH[param.annotation]
+            parser = _READER_DISPATCH[annotation]
             
             # check if argument is optional or required
             if is_optional(param.annotation):
-                new_annotation = Annotated[param.annotation, typer.Option(parser=parser)]
+                new_annotation = Annotated[annotation, typer.Option(parser=parser)]
             else:
-                new_annotation = Annotated[param.annotation, typer.Argument(parser=parser)]
+                new_annotation = Annotated[annotation, typer.Argument(parser=parser)]
 
             # Create a new parameter with the updated annotation
             overwritten_param = inspect.Parameter(
