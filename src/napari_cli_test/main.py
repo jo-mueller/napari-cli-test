@@ -54,10 +54,18 @@ def make_cli_executable(function: Callable) -> Callable:
 
         if annotation in supported_inputs:
             parser = _READER_DISPATCH[param.annotation]
+            
+            # check if argument is optional or required
+            if is_optional(param.annotation):
+                new_annotation = Annotated[param.annotation, typer.Option(parser=parser)]
+            else:
+                new_annotation = Annotated[param.annotation, typer.Argument(parser=parser)]
+
+            # Create a new parameter with the updated annotation
             overwritten_param = inspect.Parameter(
                 param.name,
                 param.kind,
-                annotation=Annotated[layers.Image, typer.Argument(parser=parser)]
+                annotation=new_annotation
             )
             parameters.append(overwritten_param)
         else:
