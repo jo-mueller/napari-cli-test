@@ -17,3 +17,10 @@ def threshold_mean(image: Image) -> Labels:
     threshold = image.data.mean()
     binary = image.data > threshold
     return Labels(binary)
+
+
+def threshold_manual(image: Image, threshold: float) -> Labels:
+    print(f"Processing image with shape: {image.data.shape}")
+
+    binary = image.data > threshold
+    return Labels(binary)
