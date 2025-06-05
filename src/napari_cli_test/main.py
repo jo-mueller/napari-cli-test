@@ -99,7 +99,7 @@ def make_cli_executable(function: Callable) -> Callable:
 
         # Apply and convert to layer if necessary
         result_layer = function(*args, **kwargs)
-        if isinstance(result_layer, types.LayerDataTuple):
+        if isinstance(result_layer, tuple):
             result_layer = layers.Layer.create(*result_layer)
 
         # Save to file
